@@ -1,0 +1,21 @@
+{
+  "name": "q",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "format":"prettier -w ./**/*.ts",
+    "test": "vitest run"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "prettier": "^3.5.2"
+  }
+}
