@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 1
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
@@ -21,10 +21,8 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-
-      - run: echo '${{ toJSON(steps.node_modules_cache_id.outputs) }}'
-      - run: echo '${{ toJSON(steps.node_modules_cache_id) }}'
-      - run: echo '${{ toJSON(steps) }}'
+      # 中身見たいときだけ使ったほうがいい
+      # - run: echo '${{ toJSON(steps) }}'
 
       - name: クリーンインストール
         if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
