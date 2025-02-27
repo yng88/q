@@ -1,0 +1,32 @@
+name: 差分検出
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 22 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: キャッシュのリストア
+        uses: actions/cache@v4
+        id: node_modules_cache_id
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: '**/node_modules'
+          key: ${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+      - run: echo '${{ toJSON(steps.node_modules_cache_id.outputs) }}'
+
+      - name: クリーンインストール
+        if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
+        run: docker compose -f docker-compose.ci.yml run --rm app npm ci
+
+      - name: 差分チェック
+        run: docker compose -f docker-compose.yml run --rm app npm run test
