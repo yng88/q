@@ -5,9 +5,9 @@ on:
   schedule:
     - cron: '0 0 * * 1'  # 毎週月曜日の午前0時（UTC）= 日本時間月曜日午前9時
     # - cron: '0 22 * * *'
-  push:
+  pull_request:
     branches:
-      - main 
+      - main
 jobs:
   test:
     runs-on: ubuntu-latest
