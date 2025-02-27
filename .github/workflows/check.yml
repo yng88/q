@@ -26,7 +26,7 @@ jobs:
 
       - name: クリーンインストール
         if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
-        run: docker compose -f docker-compose.ci.yml run --rm app npm ci
+        run: docker compose -f docker-compose.yml run --rm app npm ci
 
       - name: 差分チェック
         run: docker compose -f docker-compose.yml run --rm app npm run test
