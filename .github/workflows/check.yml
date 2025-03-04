@@ -32,4 +32,28 @@ jobs:
         run: docker compose -f docker-compose.yml run --rm app npm ci
 
       - name: 差分チェック
+        id: diff_check
+        continue-on-error: true
         run: docker compose -f docker-compose.yml run --rm app npm run test
+      
+      - name: 郵便番号ファイルダウンロード
+        if: ${{ steps.diff_check.outcome == 'failure' }}
+        run:  docker compose run --rm app wget -O ./tmp/current.zip https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+
+      - name: 解凍１
+        if: ${{ steps.diff_check.outcome == 'failure' }}
+        run: docker compose run --rm app unzip -o ./tmp/current.zip -d ./tmp/current/
+      
+      - name: 解凍２
+        if: ${{ steps.diff_check.outcome == 'failure' }}
+        run: docker compose run --rm app unzip -o ./expected/japan_postal_codes.zip -d ./tmp/expected/
+      
+      - name: 差分比較
+        if: ${{ steps.diff_check.outcome == 'failure' }}
+        run: docker compose run --rm app diff -u ./tmp/expected/utf_ken_all.csv ./tmp/current/utf_ken_all.csv
+        
+      - name: ワークフロー結果の確定
+        if: ${{ steps.diff_check.outcome == 'failure' }}
+        run: |
+          echo "差分が検出されたためワークフローを失敗として終了します"
+          exit 1
